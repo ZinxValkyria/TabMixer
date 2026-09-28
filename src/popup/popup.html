@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <title>TabMixer</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main class="app">
+      <header class="topbar">
+        <div class="brand" aria-label="TabMixer">
+          <img src="../../assets/icons/icon-32.png" alt="" width="32" height="32">
+          <div><h1>TabMixer</h1><p>Your tabs, in balance.</p></div>
+        </div>
+        <button id="refresh" class="icon-button" type="button" title="Refresh tab list" aria-label="Refresh tab list">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg>
+        </button>
+      </header>
+
+      <section class="master" aria-labelledby="master-title">
+        <div class="section-heading">
+          <div><span class="eyebrow">Output</span><h2 id="master-title">Master volume</h2></div>
+          <output id="master-value" for="master-volume">100%</output>
+        </div>
+        <input id="master-volume" class="volume-slider" type="range" min="0" max="200" value="100" aria-label="Master volume">
+        <div class="scale"><span>0</span><span>100</span><span>200%</span></div>
+      </section>
+
+      <section class="tabs-section" aria-labelledby="tabs-title">
+        <div class="section-heading tabs-heading">
+          <div><span class="eyebrow">Now playing</span><h2 id="tabs-title">Audible tabs</h2></div>
+          <span id="tab-count" class="count" aria-live="polite">0</span>
+        </div>
+        <div id="notice" class="notice" role="status" hidden></div>
+        <div id="tab-list" class="tab-list" aria-live="polite" aria-busy="true"></div>
+        <div id="empty-state" class="empty" hidden>
+          <div class="empty-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 9v6m4-9v12m4-9v6m4-11v16m4-13v10"/></svg>
+          </div>
+          <h3>No audible tabs yet</h3>
+          <p>Start audio in a regular webpage, then refresh this list.</p>
+        </div>
+      </section>
+
+      <footer>
+        <div class="footer-copy"><span class="status-dot"></span><span>Audio stays on this device</span></div>
+        <div class="footer-actions">
+          <button id="reset-all" class="text-button" type="button">Reset</button>
+          <button id="release-all" class="text-button danger" type="button">Release audio</button>
+        </div>
+      </footer>
+    </main>
+    <template id="tab-template">
+      <article class="tab-card">
+        <div class="tab-row">
+          <img class="favicon" width="28" height="28" alt="">
+          <div class="tab-copy"><h3 class="tab-title"></h3><p class="tab-site"></p></div>
+          <div class="tab-actions">
+            <button class="mini-button mute-button" type="button" aria-label="Mute tab" title="Mute">
+              <svg class="sound-on" viewBox="0 0 24 24"><path d="M5 9v6h4l5 4V5L9 9H5Zm12.5-.5a5 5 0 0 1 0 7M19.8 6.2a8 8 0 0 1 0 11.6"/></svg>
+              <svg class="sound-off" viewBox="0 0 24 24"><path d="M5 9v6h4l5 4V5L9 9H5Zm12 1 5 5m0-5-5 5"/></svg>
+            </button>
+            <button class="mini-button release-button" type="button" aria-label="Release tab audio" title="Release audio">
+              <svg viewBox="0 0 24 24"><path d="M8 5h8M6 9h12M9 9l1 10h4l1-10M10 5l1-2h2l1 2"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="control-row">
+          <input class="volume-slider tab-volume" type="range" min="0" max="200" value="100" aria-label="Tab volume">
+          <output class="tab-value">100%</output>
+        </div>
+        <div class="card-meta"><span class="connection"><span class="connection-dot"></span><span class="connection-label">Ready</span></span><button class="reset-tab" type="button">Reset</button></div>
+      </article>
+    </template>
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>
