@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "TabMixer",
+  "version": "1.0.0",
+  "description": "A focused audio mixer for browser tabs with per-site volume memory.",
+  "minimum_chrome_version": "116",
+  "permissions": [
+    "tabs",
+    "tabCapture",
+    "offscreen",
+    "storage"
+  ],
+  "background": {
+    "service_worker": "src/service-worker.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Open TabMixer",
+    "default_popup": "src/popup/popup.html",
+    "default_icon": {
+      "16": "assets/icons/icon-16.png",
+      "32": "assets/icons/icon-32.png"
+    }
+  },
+  "icons": {
+    "16": "assets/icons/icon-16.png",
+    "32": "assets/icons/icon-32.png",
+    "48": "assets/icons/icon-48.png",
+    "128": "assets/icons/icon-128.png"
+  }
+}
