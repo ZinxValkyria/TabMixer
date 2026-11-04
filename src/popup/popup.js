@@ -200,6 +200,24 @@ elements.master.addEventListener("change", async () => {
   else audioState = response.state;
   renderMaster();
 });
+document.querySelectorAll(".preset-button").forEach((button) => {
+  button.addEventListener("click", async () => {
+    const volume = clampVolume(button.dataset.volume);
+    button.disabled = true;
+    try {
+      const response = await sendMessage({ type: MESSAGE.SET_MASTER_VOLUME, volume });
+      if (!response?.ok) throw new Error(response?.error || "Audio engine unavailable.");
+      await saveSettings({ ...settings, masterVolume: volume });
+      audioState = response.state;
+      showNotice("");
+      renderMaster();
+    } catch (error) {
+      showNotice(`Could not apply preset. ${error.message}`);
+    } finally {
+      button.disabled = false;
+    }
+  });
+});
 elements.refresh.addEventListener("click", refresh);
 elements.resetAll.addEventListener("click", async () => {
   await saveSettings(DEFAULT_SETTINGS);
