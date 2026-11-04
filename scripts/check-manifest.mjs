@@ -9,11 +9,13 @@ const errors = [];
 if (manifest.manifest_version !== 3) errors.push("manifest_version must be 3");
 if (!/^\d+\.\d+\.\d+(\.\d+)?$/.test(manifest.version)) errors.push("version is not store-compatible");
 if (manifest.host_permissions?.length) errors.push("extension must not request host permissions");
-const allowed = new Set(["tabs", "tabCapture", "offscreen", "storage", "commands"]);
+const allowed = new Set(["tabs", "tabCapture", "offscreen", "storage"]);
 for (const permission of manifest.permissions || []) {
   if (!allowed.has(permission)) errors.push(`unexpected permission: ${permission}`);
 }
 
+if (manifest.permissions?.includes("commands")) errors.push("commands is a manifest key, not an API permission");
+if (!manifest.commands?._execute_action?.suggested_key?.default) errors.push("missing action shortcut");
 const files = [
   manifest.background?.service_worker,
   manifest.action?.default_popup,
