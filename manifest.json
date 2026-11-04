@@ -8,8 +8,7 @@
     "tabs",
     "tabCapture",
     "offscreen",
-    "storage",
-    "commands"
+    "storage"
   ],
   "background": {
     "service_worker": "src/service-worker.js",
