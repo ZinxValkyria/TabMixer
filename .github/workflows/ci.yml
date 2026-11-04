@@ -52,7 +52,14 @@ jobs:
       - name: Install Chromium browser
         run: npx playwright install --with-deps chromium
       - name: Run extension popup smoke test
-        run: npx playwright test e2e/popup.spec.js --reporter=line
+        run: npx playwright test e2e/popup.spec.js --reporter=line --workers=1
+      - name: Upload browser test diagnostics on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tabmixer-browser-test-results
+          path: test-results/
+          if-no-files-found: ignore
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')
