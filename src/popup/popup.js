@@ -241,4 +241,65 @@ chrome.runtime.onMessage.addListener((message) => {
   }
 });
 
+
+const PROFILE_KEY = "mixProfilesV2";
+const PROFILE_ENABLED = true;
+const profileSelect = document.querySelector("#profile-select");
+const profileName = document.querySelector("#profile-name");
+
+async function readProfiles() {
+  const data = await callChrome(chrome.storage.local.get.bind(chrome.storage.local), PROFILE_KEY);
+  const profiles = data[PROFILE_KEY];
+  if (!profiles || typeof profiles !== "object" || Array.isArray(profiles)) return {};
+  return Object.fromEntries(Object.entries(profiles).filter(([name, value]) =>
+    name.length <= 40 && value && typeof value === "object" && !Array.isArray(value)
+  ));
+}
+
+async function renderProfiles(selected) {
+  const profiles = await readProfiles();
+  profileSelect.replaceChildren();
+  for (const name of Object.keys(profiles).sort()) {
+    const option = document.createElement("option");
+    option.value = name;
+    option.textContent = name;
+    profileSelect.append(option);
+  }
+  if (selected && Object.hasOwn(profiles, selected)) profileSelect.value = selected;
+  document.querySelector("#profile-apply").disabled = !profileSelect.value;
+}
+
+if (PROFILE_ENABLED) {
+  document.querySelector("#profile-save").addEventListener("click", async () => {
+    const name = profileName.value.trim();
+    if (!name || name.length > 40 || ["__proto__", "constructor", "prototype"].includes(name)) {
+      showNotice("Enter a valid profile name (1–40 characters).");
+      return;
+    }
+    try {
+      const profiles = await readProfiles();
+      profiles[name] = { masterVolume: settings.masterVolume, siteVolumes: { ...settings.siteVolumes } };
+      await callChrome(chrome.storage.local.set.bind(chrome.storage.local), { [PROFILE_KEY]: profiles });
+      await renderProfiles(name);
+      showNotice(`Saved profile: ${name}`);
+    } catch (error) { showNotice(`Could not save profile. ${error.message}`); }
+  });
+
+  document.querySelector("#profile-apply").addEventListener("click", async () => {
+    try {
+      const profiles = await readProfiles();
+      const selected = profiles[profileSelect.value];
+      if (!selected) throw new Error("Choose a saved profile.");
+      const next = normalizeSettings(selected);
+      const response = await sendMessage({ type: MESSAGE.SET_MASTER_VOLUME, volume: next.masterVolume });
+      if (!response?.ok) throw new Error(response?.error || "Audio engine unavailable.");
+      await saveSettings(next);
+      audioState = response.state;
+      await refresh();
+      showNotice("Profile applied. Saved website levels will restore when matching audio tabs are available.");
+    } catch (error) { showNotice(`Could not apply profile. ${error.message}`); }
+  });
+  renderProfiles().catch((error) => showNotice(`Could not load profiles. ${error.message}`));
+}
+
 refresh();
