@@ -80,3 +80,11 @@ footer { min-height: 48px; padding: 10px 16px; border-top: 1px solid var(--line)
 .text-button.danger:hover { color: var(--danger); }
 button:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* v2 quick-mix presets */
+.presets { margin: 0 16px 10px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+.presets .section-heading { margin-bottom: 10px; }
+.preset-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+.preset-button { border: 1px solid var(--line); border-radius: 8px; padding: 9px 3px; background: var(--panel-raised); color: var(--text); font-size: 10px; cursor: pointer; }
+.preset-button:hover { border-color: var(--accent); background: #242139; }
+.preset-button:disabled { opacity: .5; cursor: wait; }
