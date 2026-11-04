@@ -28,6 +28,28 @@
         <div class="scale"><span>0</span><span>100</span><span>200%</span></div>
       </section>
 
+      <section class="presets" aria-labelledby="presets-title">
+        <div class="section-heading"><h2 id="presets-title">Quick mix</h2></div>
+        <div class="preset-actions" role="group" aria-label="Master volume presets">
+          <button class="preset-button" data-volume="25" type="button">Quiet · 25%</button>
+          <button class="preset-button" data-volume="100" type="button">Normal · 100%</button>
+          <button class="preset-button" data-volume="150" type="button">Boost · 150%</button>
+        </div>
+      </section>
+      <section class="profiles" aria-labelledby="profiles-title">
+        <div class="section-heading"><h2 id="profiles-title">Mix profiles (preview)</h2></div>
+        <label for="profile-select">Saved profiles</label>
+        <div class="profile-row">
+          <select id="profile-select" aria-label="Saved mix profiles"></select>
+          <button id="profile-apply" type="button">Apply</button>
+        </div>
+        <label for="profile-name">Profile name</label>
+        <div class="profile-row">
+          <input id="profile-name" type="text" maxlength="40" placeholder="e.g. Gaming">
+          <button id="profile-save" type="button">Save current</button>
+        </div>
+        <p class="profile-hint">Preview: saves the current master and website volume preferences locally. Apply a profile to restore them.</p>
+      </section>
       <section class="tabs-section" aria-labelledby="tabs-title">
         <div class="section-heading tabs-heading">
           <div><span class="eyebrow">Now playing</span><h2 id="tabs-title">Audible tabs</h2></div>
