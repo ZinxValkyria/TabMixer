@@ -8,8 +8,8 @@ const errors = [];
 
 if (manifest.manifest_version !== 3) errors.push("manifest_version must be 3");
 if (!/^\d+\.\d+\.\d+(\.\d+)?$/.test(manifest.version)) errors.push("version is not store-compatible");
-if (manifest.host_permissions?.length) errors.push("v1 must not request host permissions");
-const allowed = new Set(["tabs", "tabCapture", "offscreen", "storage"]);
+if (manifest.host_permissions?.length) errors.push("extension must not request host permissions");
+const allowed = new Set(["tabs", "tabCapture", "offscreen", "storage", "commands"]);
 for (const permission of manifest.permissions || []) {
   if (!allowed.has(permission)) errors.push(`unexpected permission: ${permission}`);
 }
