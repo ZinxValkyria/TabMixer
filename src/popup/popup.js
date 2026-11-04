@@ -293,10 +293,34 @@ if (PROFILE_ENABLED) {
       const next = normalizeSettings(selected);
       const response = await sendMessage({ type: MESSAGE.SET_MASTER_VOLUME, volume: next.masterVolume });
       if (!response?.ok) throw new Error(response?.error || "Audio engine unavailable.");
+      // Update already captured tabs immediately; preserve their mute states.
+      const tabs = await callChrome(chrome.tabs.query.bind(chrome.tabs), {});
+      const byId = new Map(tabs.map((tab) => [String(tab.id), tab]));
+      const failures = [];
+      let currentState = response.state;
+      for (const [tabId, session] of Object.entries(currentState.tabs || {})) {
+        const tab = byId.get(tabId);
+        if (!tab) continue;
+        const volume = volumeForSite(next, tab.url);
+        try {
+          const updated = await sendMessage({
+            type: MESSAGE.SET_TAB_VOLUME,
+            tabId: Number(tabId),
+            volume,
+            muted: session.muted,
+          });
+          if (!updated?.ok) throw new Error(updated?.error || "Unknown error");
+          currentState = updated.state || currentState;
+        } catch (error) {
+          failures.push(tab.title || tabId);
+        }
+      }
       await saveSettings(next);
-      audioState = response.state;
+      audioState = currentState;
       await refresh();
-      showNotice("Profile applied. Saved website levels will restore when matching audio tabs are available.");
+      showNotice(failures.length
+        ? `Profile saved, but could not update: ${failures.join(", ")}.`
+        : "Profile applied to currently mixed tabs. Other sites will use saved levels when connected.");
     } catch (error) { showNotice(`Could not apply profile. ${error.message}`); }
   });
   renderProfiles().catch((error) => showNotice(`Could not load profiles. ${error.message}`));
