@@ -11,7 +11,7 @@ test("extension permissions remain least privilege", () => {
   assert.equal(manifest.manifest_version, 3);
   assert.equal(manifest.host_permissions?.length ?? 0, 0);
   assert.equal(manifest.content_security_policy?.extension_pages, undefined);
-  const allowed = new Set(["tabs", "tabCapture", "offscreen", "storage"]);
+  const allowed = new Set(["tabs", "tabCapture", "offscreen", "storage", "commands"]);
   for (const permission of manifest.permissions ?? []) {
     assert.ok(allowed.has(permission), `Unexpected permission: ${permission}`);
   }
