@@ -7,7 +7,7 @@ on:
   pull_request:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   validate:
@@ -19,6 +19,10 @@ jobs:
           node-version: 20
       - name: Validate source
         run: npm run check
+      - name: Dependency audit
+        run: npm audit --audit-level=high
+      - name: Verify dependency manifest
+        run: npm ls --all
       - name: Build store package
         run: npm run package
       - name: Upload package artifact
@@ -27,8 +31,19 @@ jobs:
           name: tabmixer-extension
           path: release/*.zip
           if-no-files-found: error
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm run package
       - name: Publish tagged GitHub release
-        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
           files: release/*.zip
